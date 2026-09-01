@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#292522" />
+  <title>Mahmoud & Aya | Khotbe</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --charcoal: #292522;
+      --ink: #403935;
+      --cream: #ffffff;
+      --blush: #a8e6d9;
+      --rose: #7dd3c0;
+      --gold: #5ec9b8;
+      --mint: #7dd3c0;
+      --light-mint: #e0f7f3;
+      --line: rgba(125, 211, 192, 0.3);
+      --serif: 'Cormorant Garamond', Georgia, serif;
+      --sans: 'DM Sans', Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: var(--cream);
+      font-family: var(--sans);
+      overflow-x: hidden;
+    }
+    body.is-locked { overflow: hidden; }
+
+    .cover {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: var(--cream);
+      background: linear-gradient(135deg, #1a5f54 0%, #2d7a70 50%, #1a5f54 100%);
+      transition: transform 1.05s cubic-bezier(.76, 0, .24, 1), opacity .8s ease;
+    }
+    .cover.is-open { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+    .cover::before, .cover::after {
+      content: '';
+      position: absolute;
+      width: min(72vw, 540px);
+      aspect-ratio: 1;
+      border: 1px solid rgba(125, 211, 192, 0.4);
+      transform: rotate(45deg);
+    }
+    .cover::after { width: min(64vw, 475px); border-color: rgba(234, 209, 206, 0.25); }
+    .cover-inner {
+      position: relative;
+      z-index: 1;
+      width: min(86vw, 560px);
+      min-height: min(76vh, 650px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 48px 26px;
+      border: 1px solid var(--line);
+      text-align: center;
+    }
+    .cover-inner::before, .cover-inner::after {
+      content: '';
+      position: absolute;
+      width: 44px;
+      height: 44px;
+      border-color: var(--gold);
+      border-style: solid;
+    }
+    .cover-inner::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+    .cover-inner::after { right: -1px; bottom: -1px; border-width: 0 1px 1px 0; }
+    .eyebrow, .kicker {
+      margin: 0 0 22px;
+      color: var(--blush);
+      font-size: .66rem;
+      font-weight: 600;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+    }
+    .cover h1 {
+      max-width: 420px;
+      margin: 0;
+      font: 500 clamp(3.3rem, 11vw, 6rem)/.82 var(--serif);
+      letter-spacing: -.04em;
+    }
+    .cover-rule { width: 80px; height: 1px; margin: 28px 0; background: var(--gold); }
+    .cover-date { margin: 0 0 36px; font: 400 1rem var(--serif); letter-spacing: .14em; }
+    .open-button, .map-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 50px;
+      padding: 0 22px;
+      border: 1px solid var(--gold);
+      color: inherit;
+      background: transparent;
+      font: 600 .69rem var(--sans);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: color .3s ease, background .3s ease, transform .3s ease;
+      border-radius: 4px;
+    }
+    .open-button:hover, .map-button:hover { color: var(--charcoal); background: var(--gold); transform: translateY(-2px); }
+    .open-button span { font-size: 1.1rem; line-height: 0; }
+
+    .site-shell { position: relative; min-height: 100vh; }
+    .petal-field { position: fixed; inset: 0; z-index: 2; overflow: hidden; pointer-events: none; }
+    .petal {
+      position: absolute;
+      top: -30px;
+      width: 12px;
+      height: 18px;
+      border-radius: 80% 0 80% 0;
+      background: var(--blush);
+      opacity: .5;
+      animation: drift linear infinite;
+    }
+    .petal:nth-child(3n) { background: #dcb0a9; transform: rotate(35deg); }
+    .petal:nth-child(4n) { width: 8px; height: 12px; background: var(--gold); opacity: .35; }
+    @keyframes drift {
+      0% { transform: translate3d(0, -30px, 0) rotate(0deg); }
+      45% { transform: translate3d(42px, 48vh, 0) rotate(150deg); }
+      100% { transform: translate3d(-30px, 110vh, 0) rotate(330deg); }
+    }
+
+    main { position: relative; z-index: 1; }
+    .hero {
+      position: relative;
+      min-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 60px 24px 80px;
+      text-align: center;
+      background: url('eng3.png') center / cover no-repeat;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, transparent 60%, rgba(255, 255, 255, 0.1) 100%);
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    .hero::after {
+      display: none;
+    }
+    .hero-frame {
+      width: min(100%, 780px);
+      padding: clamp(20px, 6vw, 40px) 20px;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      position: relative;
+      z-index: 2;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    }
+    .hero h2 {
+      max-width: 730px;
+      margin: 0 auto;
+      color: var(--charcoal);
+      font: 500 clamp(2.5rem, 8vw, 5rem)/.72 var(--serif);
+      letter-spacing: -.055em;
+    }
+    .hero h2 em { color: var(--rose); font-weight: 400; }
+    .hero-sub { margin: 16px 0 0; font: 400 clamp(0.85rem, 2vw, 1rem) var(--serif); letter-spacing: .1em; }
+    .section { position: relative; padding: 92px 24px; }
+    .section-inner { width: min(100%, 980px); margin: 0 auto; }
+    .date-section { background: var(--light-mint); }
+    .date-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 14px; }
+    .date-tile {
+      min-height: 190px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 24px;
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 24px rgba(125, 211, 192, 0.12);
+      border-radius: 8px;
+    }
+    .date-tile strong { color: var(--charcoal); font: 500 clamp(3.7rem, 8vw, 6rem)/.78 var(--serif); }
+    .date-tile span { color: var(--rose); font-size: .68rem; font-weight: 600; letter-spacing: .2em; text-transform: uppercase; }
+    .message-section { text-align: center; background: var(--cream); }
+    .message-wrap { max-width: 690px; margin: 0 auto; }
+    .message-wrap h3 { margin: 0 0 24px; color: var(--charcoal); font: 500 clamp(3rem, 7vw, 5rem)/.85 var(--serif); }
+    .message-wrap p { margin: 0 auto 34px; color: #665b54; font: 400 1.1rem/1.75 var(--serif); }
+    .signature { color: var(--rose); font: 600 1.35rem var(--serif); letter-spacing: .08em; }
+    .countdown-section { color: var(--cream); background: #2d7a70; }
+    .countdown-section .kicker { color: var(--gold); }
+    .countdown-section h3 { margin: 0 0 36px; font: 500 clamp(3rem, 7vw, 5rem)/.85 var(--serif); }
+    .countdown-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 12px; }
+    .count-box { padding: 20px 10px; border: 1px solid rgba(125, 211, 192, 0.4); text-align: center; border-radius: 6px; }
+    .count-box strong { display: block; margin-bottom: 9px; color: var(--blush); font: 500 clamp(2.4rem, 6vw, 4.5rem)/.9 var(--serif); }
+    .count-box span { color: #c1b5aa; font-size: .62rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+    .location-section { padding-bottom: 112px; text-align: center; background: var(--light-mint); }
+    .location-section h3 { margin: 0 0 12px; color: var(--charcoal); font: 500 clamp(3rem, 7vw, 5rem)/.85 var(--serif); }
+    .location-section p { margin: 0 auto 30px; color: #76675d; font: 400 1rem var(--serif); }
+    .map-button { color: var(--charcoal); }
+    footer { padding: 22px; color: #a9988c; background: #1a5f54; text-align: center; font: .65rem var(--sans); letter-spacing: .18em; text-transform: uppercase; }
+
+    @media (max-width: 768px) {
+      .cover-inner { min-height: 68vh; padding: 36px 20px; }
+      .hero { padding: 80px 16px 60px; min-height: 85vh; }
+      .hero-frame { padding: clamp(40px, 10vw, 80px) 16px; }
+      .hero h2 { font-size: clamp(2.5rem, 10vw, 4.5rem); }
+      .hero-sub { font-size: 0.95rem; margin-top: 24px; }
+      .section { padding: 60px 16px; }
+      .section-inner { width: 100%; padding: 0 12px; }
+      .date-grid { gap: 10px; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+      .date-tile { min-height: 140px; padding: 18px; }
+      .date-tile strong { font-size: clamp(2.2rem, 8vw, 3.2rem); }
+      .date-tile span { font-size: 0.6rem; }
+      .message-wrap h3 { font-size: clamp(2rem, 6vw, 3.5rem); }
+      .message-wrap p { font-size: 1rem; line-height: 1.6; }
+      .countdown-section h3 { font-size: clamp(2rem, 6vw, 3.5rem); }
+      .countdown-grid { gap: 8px; }
+      .count-box { padding: 14px 8px; }
+      .count-box strong { font-size: clamp(1.8rem, 5vw, 3rem); }
+      .count-box span { font-size: 0.55rem; letter-spacing: 0.08em; }
+      .location-section h3 { font-size: clamp(2rem, 6vw, 3.5rem); }
+      .location-section p { font-size: 0.95rem; }
+      .hero::before { width: 80px; height: 80px; top: 10px; right: 20px; }
+      .hero::after { width: 70px; height: 70px; bottom: 20px; left: 15px; }
+    }
+
+    @media (max-width: 480px) {
+      .cover { padding: 0 12px; }
+      .cover-inner { min-height: 65vh; padding: 28px 16px; width: 100%; }
+      .cover h1 { font-size: clamp(2.2rem, 9vw, 3.5rem); }
+      .cover-date { font-size: 0.9rem; margin-bottom: 28px; }
+      .open-button { min-height: 44px; padding: 0 16px; font-size: 0.6rem; }
+      .hero { padding: 60px 12px 50px; min-height: 80vh; }
+      .hero-frame { padding: clamp(30px, 8vw, 60px) 12px; }
+      .hero h2 { font-size: clamp(2rem, 8.5vw, 3.5rem); letter-spacing: -0.03em; }
+      .hero-sub { font-size: 0.9rem; margin-top: 20px; }
+      .section { padding: 50px 12px; }
+      .section-inner { padding: 0 8px; }
+      .date-grid { gap: 8px; grid-template-columns: 1fr; }
+      .date-tile { min-height: 110px; padding: 14px; }
+      .date-tile strong { font-size: clamp(1.8rem, 7vw, 2.8rem); }
+      .date-tile span { font-size: 0.5rem; letter-spacing: 0.1em; }
+      .kicker { font-size: 0.6rem; margin-bottom: 18px; }
+      .message-wrap h3 { font-size: clamp(1.6rem, 5.5vw, 2.5rem); }
+      .message-wrap p { font-size: 0.95rem; line-height: 1.5; margin-bottom: 24px; }
+      .signature { font-size: 1.15rem; }
+      .countdown-section h3 { font-size: clamp(1.6rem, 5.5vw, 2.5rem); margin-bottom: 28px; }
+      .countdown-grid { gap: 6px; }
+      .count-box { padding: 12px 6px; min-height: auto; }
+      .count-box strong { font-size: clamp(1.4rem, 4.5vw, 2.2rem); margin-bottom: 6px; }
+      .count-box span { font-size: 0.48rem; letter-spacing: 0.06em; }
+      .location-section { padding-bottom: 80px; }
+      .location-section h3 { font-size: clamp(1.6rem, 5.5vw, 2.5rem); margin-bottom: 10px; }
+      .location-section p { font-size: 0.9rem; margin-bottom: 24px; }
+      .map-button { font-size: 0.6rem; min-height: 42px; padding: 0 14px; }
+      .hero::before { width: 60px; height: 60px; top: 5px; right: 10px; box-shadow: 60px 80px 0 -30px rgba(125, 211, 192, 0.2); }
+      .hero::after { width: 55px; height: 55px; bottom: 10px; left: 8px; box-shadow: 100px 60px 0 -25px rgba(94, 201, 184, 0.2); }
+      footer { padding: 16px 12px; font-size: 0.6rem; }
+    }
+  </style>
+</head>
+<body class="is-locked">
+  <div class="cover" id="cover" aria-label="Invitation cover">
+    <div class="cover-inner">
+      <p class="eyebrow">An invitation to celebrate</p>
+      <h1>Mahmoud<br /><em>&amp;</em> Aya</h1>
+      <div class="cover-rule"></div>
+      <p class="cover-date">12 · 09 · 2026</p>
+      <button class="open-button" id="openButton" type="button">Tap to Open <span aria-hidden="true">↗</span></button>
+    </div>
+  </div>
+
+  <div class="site-shell">
+    <div class="petal-field" id="petalField" aria-hidden="true"></div>
+    <main>
+      <section class="hero">
+        <div class="hero-frame">
+          <p class="kicker">Our khotbe celebration</p>
+          <h2>Mahmoud <em>And</em> Aya<br />Engagement</h2>
+          <p class="hero-sub">A beginning, beautifully shared</p>
+        </div>
+      </section>
+
+      <section class="section date-section">
+        <div class="section-inner">
+          <p class="kicker">Save the date</p>
+          <div class="date-grid" aria-label="Event date">
+            <div class="date-tile"><strong>12</strong><span>Day</span></div>
+            <div class="date-tile"><strong>September</strong><span>Month</span></div>
+            <div class="date-tile"><strong>2026</strong><span>Year</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section message-section">
+        <div class="message-wrap">
+          <p class="kicker">With joyful hearts</p>
+          <h3>You are invited!!</h3>
+          <p>Dear friends and family, As we get ready to say 'I do,' we feel grateful for the wonderful people in our lives. Your support means the world to us, and we would be honored to have you with us as we begin our life together.</p>
+          <div class="signature">Mahmoud &amp; Aya</div>
+        </div>
+      </section>
+
+      <section class="section countdown-section">
+        <div class="section-inner">
+          <p class="kicker">Until we celebrate</p>
+          <h3>Counting the moments</h3>
+          <div class="countdown-grid" aria-label="Countdown to September 12, 2026 at 7:30 PM">
+            <div class="count-box"><strong id="days">00</strong><span>Days</span></div>
+            <div class="count-box"><strong id="hours">00</strong><span>Hours</span></div>
+            <div class="count-box"><strong id="minutes">00</strong><span>Minutes</span></div>
+            <div class="count-box"><strong id="seconds">00</strong><span>Seconds</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section location-section">
+        <div class="section-inner">
+          <p class="kicker">Join us there</p>
+          <h3>Find the celebration</h3>
+          <p>We cannot wait to welcome you.</p>
+          <a class="map-button" href="https://www.google.com/maps/dir/34.453998,35.904849/%D8%B5%D8%A7%D9%84%D8%A9+%D9%85%D9%86%D8%AA%D8%B2%D9%87+%D8%A7%D9%84%D9%85%D9%86%D9%8A%D8%A9%D8%8C+FWHW%2BQCH,+Miniyeh%E2%80%AD/@34.4687221,35.8812739,13z/data=!4m10!4m9!1m1!4e1!1m5!1m1!1s0x152220277deeefb5:0x4fed3c33e3b5483e!2m2!1d35.9461143!2d34.4794409!3e0?entry=ttu&amp;g_ep=EgoyMDI2MDgyNC4wIKXMDSoASAFQAw%3D%3D" target="_blank" rel="noopener">View Location on Google Maps <span aria-hidden="true">↗</span></a>
+        </div>
+      </section>
+    </main>
+    <footer>Mahmoud &amp; Aya · 12 September 2026</footer>
+  </div>
+
+  <script>
+    const cover = document.getElementById('cover');
+    const openButton = document.getElementById('openButton');
+    const petalField = document.getElementById('petalField');
+    const targetDate = new Date(2026, 8, 12, 19, 30, 0).getTime();
+
+    openButton.addEventListener('click', () => {
+      cover.classList.add('is-open');
+      document.body.classList.remove('is-locked');
+      window.setTimeout(() => document.querySelector('.hero').focus?.(), 850);
+    });
+
+    for (let index = 0; index < 22; index += 1) {
+      const petal = document.createElement('i');
+      petal.className = 'petal';
+      petal.style.left = `${Math.random() * 100}%`;
+      petal.style.animationDuration = `${12 + Math.random() * 14}s`;
+      petal.style.animationDelay = `${Math.random() * -20}s`;
+      petal.style.opacity = `${0.25 + Math.random() * 0.4}`;
+      petalField.appendChild(petal);
+    }
+
+    function updateCountdown() {
+      const difference = Math.max(0, targetDate - Date.now());
+      const values = {
+        days: Math.floor(difference / 86400000),
+        hours: Math.floor((difference / 3600000) % 24),
+        minutes: Math.floor((difference / 60000) % 60),
+        seconds: Math.floor((difference / 1000) % 60)
+      };
+      Object.entries(values).forEach(([unit, value]) => {
+        document.getElementById(unit).textContent = String(value).padStart(2, '0');
+      });
+    }
+
+    updateCountdown();
+    window.setInterval(updateCountdown, 1000);
+  </script>
+</body>
+</html>
