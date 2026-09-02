@@ -80,8 +80,8 @@
     .cover-inner::after { right: -1px; bottom: -1px; border-width: 0 1px 1px 0; }
     .eyebrow, .kicker {
       margin: 0 0 22px;
-      color: var(--blush);
-      font-size: .66rem;
+      color: black;
+      font-size: 3rem;
       font-weight: 600;
       letter-spacing: .28em;
       text-transform: uppercase;
@@ -165,24 +165,25 @@
     }
     .hero-frame {
       width: min(100%, 780px);
-      padding: clamp(20px, 6vw, 40px) 20px;
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
+      padding: clamp(12px, 3vw, 20px) 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.75);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.75);
       position: relative;
       z-index: 2;
-      background: rgba(255, 255, 255, 0.95);
-      border-radius: 8px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      background: transparent;
+      border-radius: 0;
+      box-shadow: none;
     }
     .hero h2 {
       max-width: 730px;
       margin: 0 auto;
-      color: var(--charcoal);
-      font: 500 clamp(2.5rem, 8vw, 5rem)/.72 var(--serif);
+      color: #ffffff;
+      font: 700 clamp(2.9rem, 9vw, 6rem)/.72 var(--serif);
       letter-spacing: -.055em;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
     }
-    .hero h2 em { color: var(--rose); font-weight: 400; }
-    .hero-sub { margin: 16px 0 0; font: 400 clamp(0.85rem, 2vw, 1rem) var(--serif); letter-spacing: .1em; }
+    .hero h2 em { color: #f4efe8; font-weight: 700; }
+    .hero-sub { margin: 16px 0 0; font: 700 clamp(0.9rem, 2vw, 1.1rem) var(--serif); letter-spacing: .12em; color: #fffdf9; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); }
     .section { position: relative; padding: 92px 24px; }
     .section-inner { width: min(100%, 980px); margin: 0 auto; }
     .date-section { background: var(--light-mint); }
@@ -211,6 +212,79 @@
     .count-box { padding: 20px 10px; border: 1px solid rgba(125, 211, 192, 0.4); text-align: center; border-radius: 6px; }
     .count-box strong { display: block; margin-bottom: 9px; color: var(--blush); font: 500 clamp(2.4rem, 6vw, 4.5rem)/.9 var(--serif); }
     .count-box span { color: #c1b5aa; font-size: .62rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
+    .wish-section { background: #f6fffd; }
+    .wish-box {
+      max-width: 700px;
+      margin: 0 auto;
+      padding: 34px 26px;
+      text-align: center;
+      border: 1px solid rgba(125, 211, 192, 0.4);
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.75);
+      box-shadow: 0 18px 42px rgba(32, 104, 93, 0.08);
+      backdrop-filter: blur(6px);
+    }
+    .wish-box h3 {
+      margin: 0 0 10px;
+      color: var(--charcoal);
+      font: 600 clamp(2.2rem, 5vw, 3.3rem)/1.05 var(--serif);
+    }
+    .wish-box p {
+      margin: 0 auto 22px;
+      max-width: 560px;
+      color: #5d675f;
+      font: 400 1rem/1.7 var(--serif);
+    }
+    .wish-form {
+      display: grid;
+      gap: 14px;
+      text-align: left;
+    }
+    .wish-form input, .wish-form textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid rgba(125, 211, 192, 0.6);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--charcoal);
+      font: 400 1rem var(--sans);
+      outline: none;
+      transition: border-color .2s ease, box-shadow .2s ease;
+    }
+    .wish-form input:focus, .wish-form textarea:focus {
+      border-color: var(--rose);
+      box-shadow: 0 0 0 4px rgba(125, 211, 192, 0.12);
+    }
+    .wish-form textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+    .wish-form button {
+      justify-self: center;
+      min-width: 200px;
+      padding: 14px 22px;
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #2d7a70, #5ec9b8);
+      color: #fff;
+      font: 600 0.78rem var(--sans);
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: transform .2s ease, box-shadow .2s ease;
+      box-shadow: 0 12px 20px rgba(45, 122, 112, 0.18);
+    }
+    .wish-form button:hover {
+      transform: translateY(-2px);
+    }
+    .wish-status {
+      min-height: 24px;
+      margin-top: 14px;
+      color: #1e6d5b;
+      font: 500 0.9rem var(--sans);
+      text-align: center;
+    }
+    .wish-status.error { color: #ac3d42; }
     .location-section { padding-bottom: 112px; text-align: center; background: var(--light-mint); }
     .location-section h3 { margin: 0 0 12px; color: var(--charcoal); font: 500 clamp(3rem, 7vw, 5rem)/.85 var(--serif); }
     .location-section p { margin: 0 auto 30px; color: #76675d; font: 400 1rem var(--serif); }
@@ -293,7 +367,7 @@
     <main>
       <section class="hero">
         <div class="hero-frame">
-          <p class="kicker">Our khotbe celebration</p>
+          <p class="kicker">Our Engagment celebration</p>
           <h2>Mahmoud <em>And</em> Aya<br />Engagement</h2>
           <p class="hero-sub">A beginning, beautifully shared</p>
         </div>
@@ -329,6 +403,20 @@
             <div class="count-box"><strong id="minutes">00</strong><span>Minutes</span></div>
             <div class="count-box"><strong id="seconds">00</strong><span>Seconds</span></div>
           </div>
+        </div>
+      </section>
+
+      <section class="section wish-section">
+        <div class="wish-box">
+          <p class="kicker">Share your blessings</p>
+          <h3>We would be glad to have you in our engagement</h3>
+          <p>Leave a heartfelt message for Mahmoud and Aya and let them feel your love and support on this beautiful day.</p>
+          <form class="wish-form" id="wishForm" method="post" action="send-wish.php">
+            <input type="text" name="name" placeholder="Your name (optional)" aria-label="Your name" />
+            <textarea name="message" placeholder="Write your wishes for Mahmoud and Aya..." aria-label="Your message" required></textarea>
+            <button type="submit">Send wish</button>
+          </form>
+          <div class="wish-status" id="wishStatus" aria-live="polite"></div>
         </div>
       </section>
 
@@ -381,6 +469,39 @@
 
     updateCountdown();
     window.setInterval(updateCountdown, 1000);
+
+    const wishForm = document.getElementById('wishForm');
+    const wishStatus = document.getElementById('wishStatus');
+
+    if (wishForm && wishStatus) {
+      wishForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        const formData = new FormData(wishForm);
+        wishStatus.textContent = 'Sending your wish...';
+        wishStatus.classList.remove('error');
+
+        try {
+          const response = await fetch('send-wish.php', {
+            method: 'POST',
+            body: formData,
+            headers: { 'Accept': 'application/json' }
+          });
+
+          const data = await response.json();
+
+          if (!response.ok || !data.success) {
+            throw new Error(data.message || 'Unable to send your wish.');
+          }
+
+          wishStatus.textContent = data.message;
+          wishForm.reset();
+        } catch (error) {
+          wishStatus.textContent = error.message || 'Unable to send your wish.';
+          wishStatus.classList.add('error');
+        }
+      });
+    }
   </script>
 </body>
 </html>
