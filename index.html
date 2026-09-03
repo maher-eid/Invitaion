@@ -411,9 +411,9 @@
           <p class="kicker">Share your blessings</p>
           <h3>We would be glad to have you in our engagement</h3>
           <p>Leave a heartfelt message for Mahmoud and Aya and let them feel your love and support on this beautiful day.</p>
-          <form class="wish-form" id="wishForm" method="post" action="send-wish.php">
+          <form class="wish-form" id="wishForm">
             <input type="text" name="name" placeholder="Your name (optional)" aria-label="Your name" />
-            <textarea name="message" placeholder="Write your wishes for Mahmoud and Aya..." aria-label="Your message" required></textarea>
+            <textarea name="message" placeholder="Write your wishes for Mahmoud and Aya..." aria-label="Your message"></textarea>
             <button type="submit">Send wish</button>
           </form>
           <div class="wish-status" id="wishStatus" aria-live="polite"></div>
@@ -477,15 +477,26 @@
       wishForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        const formData = new FormData(wishForm);
+        const name = (document.querySelector('input[name="name"]') || {}).value || '';
+        const message = (document.querySelector('textarea[name="message"]') || {}).value || '';
+
+        if (!message.trim()) {
+          wishStatus.textContent = 'Please write a message before sending.';
+          wishStatus.classList.add('error');
+          return;
+        }
+
         wishStatus.textContent = 'Sending your wish...';
         wishStatus.classList.remove('error');
+
+        const formData = new FormData();
+        formData.append('name', name.trim());
+        formData.append('message', message.trim());
 
         try {
           const response = await fetch('send-wish.php', {
             method: 'POST',
-            body: formData,
-            headers: { 'Accept': 'application/json' }
+            body: formData
           });
 
           const data = await response.json();
