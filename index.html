@@ -578,32 +578,28 @@
         try {
           const response = await fetch('send-wish.php', {
             method: 'POST',
-            body: formData,
-            credentials: 'same-origin'
+            body: formData
           });
 
-          const responseText = await response.text();
-          let data;
-
-          try {
-            data = JSON.parse(responseText);
-          } catch (parseError) {
-            throw new Error('Invalid server response. Please check your server configuration.');
+          let data = {};
+          const contentType = response.headers.get('content-type');
+          
+          if (contentType && contentType.includes('application/json')) {
+            data = await response.json();
+          } else {
+            const text = await response.text();
+            data = { success: false, message: 'Invalid server response.' };
           }
 
-          if (!response.ok) {
-            throw new Error(data.message || 'Server returned error: ' + response.status);
-          }
-
-          if (!data.success) {
+          if (response.ok && data.success) {
+            wishStatus.textContent = data.message || 'Thank you! Your message has been sent.';
+            wishStatus.classList.remove('error');
+            wishForm.reset();
+          } else {
             throw new Error(data.message || 'Unable to send your wish.');
           }
-
-          wishStatus.textContent = data.message;
-          wishStatus.classList.remove('error');
-          wishForm.reset();
         } catch (error) {
-          console.error('Form submission error:', error);
+          console.error('Form error:', error);
           wishStatus.textContent = error.message || 'Unable to send your wish. Please try again.';
           wishStatus.classList.add('error');
         }
