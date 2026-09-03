@@ -160,9 +160,6 @@
       pointer-events: none;
     }
     
-    .hero::after {
-      display: none;
-    }
     .hero-frame {
       width: min(100%, 780px);
       padding: clamp(12px, 3vw, 20px) 10px;
@@ -171,8 +168,6 @@
       position: relative;
       z-index: 2;
       background: transparent;
-      border-radius: 0;
-      box-shadow: none;
     }
     .hero h2 {
       max-width: 730px;
@@ -212,9 +207,7 @@
     .count-box { padding: 20px 10px; border: 1px solid rgba(125, 211, 192, 0.4); text-align: center; border-radius: 6px; }
     .count-box strong { display: block; margin-bottom: 9px; color: var(--blush); font: 500 clamp(2.4rem, 6vw, 4.5rem)/.9 var(--serif); }
     .count-box span { color: #c1b5aa; font-size: .62rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
-    #audioPlayer {
-      display: none;
-    }
+    
     .audio-overlay {
       position: fixed;
       top: 50%;
@@ -227,6 +220,7 @@
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
       text-align: center;
       max-width: 400px;
+      display: none;
     }
     .audio-overlay h3 {
       margin: 0 0 20px;
@@ -283,8 +277,6 @@
       .count-box span { font-size: 0.55rem; letter-spacing: 0.08em; }
       .location-section h3 { font-size: clamp(2rem, 6vw, 3.5rem); }
       .location-section p { font-size: 0.95rem; }
-      .hero::before { width: 80px; height: 80px; top: 10px; right: 20px; }
-      .hero::after { width: 70px; height: 70px; bottom: 20px; left: 15px; }
     }
 
     @media (max-width: 480px) {
@@ -316,13 +308,16 @@
       .location-section h3 { font-size: clamp(1.6rem, 5.5vw, 2.5rem); margin-bottom: 10px; }
       .location-section p { font-size: 0.9rem; margin-bottom: 24px; }
       .map-button { font-size: 0.6rem; min-height: 42px; padding: 0 14px; }
-      .hero::before { width: 60px; height: 60px; top: 5px; right: 10px; box-shadow: 60px 80px 0 -30px rgba(125, 211, 192, 0.2); }
-      .hero::after { width: 55px; height: 55px; bottom: 10px; left: 8px; box-shadow: 100px 60px 0 -25px rgba(94, 201, 184, 0.2); }
       footer { padding: 16px 12px; font-size: 0.6rem; }
     }
   </style>
 </head>
 <body class="is-locked">
+  <!-- Audio element pointing directly to your local file -->
+  <audio id="audioPlayer" src="songs.mp3" loop></audio>
+
+ 
+
   <div class="cover" id="cover" aria-label="Invitation cover">
     <div class="cover-inner">
       <p class="eyebrow">An invitation to celebrate</p>
@@ -338,7 +333,7 @@
     <main>
       <section class="hero">
         <div class="hero-frame">
-          <p class="kicker">Our Engagment celebration</p>
+          <p class="kicker">Our Engagement celebration</p>
           <h2>Mahmoud <em>And</em> Aya<br />Engagement</h2>
           <p class="hero-sub">A beginning, beautifully shared</p>
         </div>
@@ -393,13 +388,45 @@
     const cover = document.getElementById('cover');
     const openButton = document.getElementById('openButton');
     const petalField = document.getElementById('petalField');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const audioOverlay = document.getElementById('audioOverlay');
+    const pauseAudioBtn = document.getElementById('pauseAudioBtn');
+    const closeAudioBtn = document.getElementById('closeAudioBtn');
+    
     const targetDate = new Date(2026, 8, 12, 19, 30, 0).getTime();
 
     openButton.addEventListener('click', () => {
       cover.classList.add('is-open');
       document.body.classList.remove('is-locked');
+      
+      // Play audio cleanly using the user interaction trigger
+      if (audioPlayer) {
+        audioPlayer.play().then(() => {
+          if (audioOverlay) audioOverlay.style.display = 'block';
+        }).catch(err => console.log('Audio play error:', err));
+      }
+
       window.setTimeout(() => document.querySelector('.hero').focus?.(), 850);
     });
+
+    if (pauseAudioBtn) {
+      pauseAudioBtn.addEventListener('click', function() {
+        if (audioPlayer.paused) { 
+          audioPlayer.play(); 
+          this.textContent = 'Pause'; 
+        } else { 
+          audioPlayer.pause(); 
+          this.textContent = 'Play'; 
+        }
+      });
+    }
+
+    if (closeAudioBtn) {
+      closeAudioBtn.addEventListener('click', function() {
+        if (audioPlayer) audioPlayer.pause();
+        if (audioOverlay) audioOverlay.style.display = 'none';
+      });
+    }
 
     for (let index = 0; index < 22; index += 1) {
       const petal = document.createElement('i');
@@ -420,51 +447,13 @@
         seconds: Math.floor((difference / 1000) % 60)
       };
       Object.entries(values).forEach(([unit, value]) => {
-        document.getElementById(unit).textContent = String(value).padStart(2, '0');
+        const el = document.getElementById(unit);
+        if (el) el.textContent = String(value).padStart(2, '0');
       });
     }
 
     updateCountdown();
     window.setInterval(updateCountdown, 1000);
-
-    let audioPlayer = null;
-    let audioOverlay = null;
-
-    function createAudioOverlay(src) {
-      if (audioOverlay) audioOverlay.remove();
-      
-      audioOverlay = document.createElement('div');
-      audioOverlay.className = 'audio-overlay';
-      audioOverlay.innerHTML = '<h3>🎵 Music Playing</h3><p>Your engagement song is playing...</p><div class="audio-controls"><button class="audio-btn" id="pauseAudioBtn">Pause</button><button class="audio-btn" id="closeAudioBtn">Close</button></div>';
-      document.body.appendChild(audioOverlay);
-
-      if (!audioPlayer) {
-        audioPlayer = document.createElement('audio');
-        audioPlayer.id = 'audioPlayer';
-        audioPlayer.loop = true;
-        audioPlayer.autoplay = true;
-        document.body.appendChild(audioPlayer);
-      }
-
-      audioPlayer.src = src;
-      audioPlayer.play().catch(err => console.log('Audio play error:', err));
-
-      document.getElementById('pauseAudioBtn').addEventListener('click', function() {
-        if (audioPlayer.paused) { audioPlayer.play(); this.textContent = 'Pause'; }
-        else { audioPlayer.pause(); this.textContent = 'Play'; }
-      });
-
-      document.getElementById('closeAudioBtn').addEventListener('click', function() {
-        audioPlayer.pause();
-        audioOverlay.remove();
-      });
-    }
-
-    window.playEngagementMusic = function(musicUrl) {
-      if (musicUrl) {
-        createAudioOverlay(musicUrl);
-      }
-    };
   </script>
 </body>
 </html>
