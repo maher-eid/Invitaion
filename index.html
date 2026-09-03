@@ -582,12 +582,18 @@
             credentials: 'same-origin'
           });
 
-          if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error('Server error: ' + errorText);
+          const responseText = await response.text();
+          let data;
+
+          try {
+            data = JSON.parse(responseText);
+          } catch (parseError) {
+            throw new Error('Invalid server response. Please check your server configuration.');
           }
 
-          const data = await response.json();
+          if (!response.ok) {
+            throw new Error(data.message || 'Server returned error: ' + response.status);
+          }
 
           if (!data.success) {
             throw new Error(data.message || 'Unable to send your wish.');
