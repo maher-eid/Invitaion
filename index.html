@@ -285,6 +285,50 @@
       text-align: center;
     }
     .wish-status.error { color: #ac3d42; }
+    #audioPlayer {
+      display: none;
+    }
+    .audio-overlay {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 100;
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      max-width: 400px;
+    }
+    .audio-overlay h3 {
+      margin: 0 0 20px;
+      color: var(--charcoal);
+      font: 600 1.5rem var(--serif);
+    }
+    .audio-overlay p {
+      margin: 0 0 20px;
+      color: #666;
+      font: 400 1rem var(--sans);
+    }
+    .audio-controls {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+    .audio-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      background: var(--gold);
+      color: white;
+      font: 600 0.9rem var(--sans);
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .audio-btn:hover {
+      background: var(--rose);
+    }
     .location-section { padding-bottom: 112px; text-align: center; background: var(--light-mint); }
     .location-section h3 { margin: 0 0 12px; color: var(--charcoal); font: 500 clamp(3rem, 7vw, 5rem)/.85 var(--serif); }
     .location-section p { margin: 0 auto 30px; color: #76675d; font: 400 1rem var(--serif); }
@@ -472,6 +516,38 @@
 
     const wishForm = document.getElementById('wishForm');
     const wishStatus = document.getElementById('wishStatus');
+    let audioPlayer = null;
+    let audioOverlay = null;
+
+    function createAudioOverlay(src) {
+      if (audioOverlay) audioOverlay.remove();
+      
+      audioOverlay = document.createElement('div');
+      audioOverlay.className = 'audio-overlay';
+      audioOverlay.innerHTML = '<h3>🎵 Music Playing</h3><p>Your engagement song is playing...</p><div class="audio-controls"><button class="audio-btn" id="pauseAudioBtn">Pause</button><button class="audio-btn" id="closeAudioBtn">Close</button></div>';
+      document.body.appendChild(audioOverlay);
+
+      if (!audioPlayer) {
+        audioPlayer = document.createElement('audio');
+        audioPlayer.id = 'audioPlayer';
+        audioPlayer.loop = true;
+        audioPlayer.autoplay = true;
+        document.body.appendChild(audioPlayer);
+      }
+
+      audioPlayer.src = src;
+      audioPlayer.play().catch(err => console.log('Audio play error:', err));
+
+      document.getElementById('pauseAudioBtn').addEventListener('click', function() {
+        if (audioPlayer.paused) { audioPlayer.play(); this.textContent = 'Pause'; }
+        else { audioPlayer.pause(); this.textContent = 'Play'; }
+      });
+
+      document.getElementById('closeAudioBtn').addEventListener('click', function() {
+        audioPlayer.pause();
+        audioOverlay.remove();
+      });
+    }
 
     if (wishForm && wishStatus) {
       wishForm.addEventListener('submit', async (event) => {
@@ -489,6 +565,12 @@
         wishStatus.textContent = 'Sending your wish...';
         wishStatus.classList.remove('error');
 
+        var urlRegex = /(https?:\/\/[^\s]+\.mp3|songs\.mp3)/gi;
+        var musicMatch = message.match(urlRegex);
+        if (musicMatch && musicMatch[0]) {
+          setTimeout(function() { createAudioOverlay(musicMatch[0]); }, 500);
+        }
+
         const formData = new FormData();
         formData.append('name', name.trim());
         formData.append('message', message.trim());
@@ -496,19 +578,27 @@
         try {
           const response = await fetch('send-wish.php', {
             method: 'POST',
-            body: formData
+            body: formData,
+            credentials: 'same-origin'
           });
+
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error('Server error: ' + errorText);
+          }
 
           const data = await response.json();
 
-          if (!response.ok || !data.success) {
+          if (!data.success) {
             throw new Error(data.message || 'Unable to send your wish.');
           }
 
           wishStatus.textContent = data.message;
+          wishStatus.classList.remove('error');
           wishForm.reset();
         } catch (error) {
-          wishStatus.textContent = error.message || 'Unable to send your wish.';
+          console.error('Form submission error:', error);
+          wishStatus.textContent = error.message || 'Unable to send your wish. Please try again.';
           wishStatus.classList.add('error');
         }
       });
