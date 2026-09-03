@@ -212,79 +212,6 @@
     .count-box { padding: 20px 10px; border: 1px solid rgba(125, 211, 192, 0.4); text-align: center; border-radius: 6px; }
     .count-box strong { display: block; margin-bottom: 9px; color: var(--blush); font: 500 clamp(2.4rem, 6vw, 4.5rem)/.9 var(--serif); }
     .count-box span { color: #c1b5aa; font-size: .62rem; font-weight: 600; letter-spacing: .16em; text-transform: uppercase; }
-    .wish-section { background: #f6fffd; }
-    .wish-box {
-      max-width: 700px;
-      margin: 0 auto;
-      padding: 34px 26px;
-      text-align: center;
-      border: 1px solid rgba(125, 211, 192, 0.4);
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.75);
-      box-shadow: 0 18px 42px rgba(32, 104, 93, 0.08);
-      backdrop-filter: blur(6px);
-    }
-    .wish-box h3 {
-      margin: 0 0 10px;
-      color: var(--charcoal);
-      font: 600 clamp(2.2rem, 5vw, 3.3rem)/1.05 var(--serif);
-    }
-    .wish-box p {
-      margin: 0 auto 22px;
-      max-width: 560px;
-      color: #5d675f;
-      font: 400 1rem/1.7 var(--serif);
-    }
-    .wish-form {
-      display: grid;
-      gap: 14px;
-      text-align: left;
-    }
-    .wish-form input, .wish-form textarea {
-      width: 100%;
-      padding: 14px 16px;
-      border: 1px solid rgba(125, 211, 192, 0.6);
-      border-radius: 12px;
-      background: rgba(255, 255, 255, 0.9);
-      color: var(--charcoal);
-      font: 400 1rem var(--sans);
-      outline: none;
-      transition: border-color .2s ease, box-shadow .2s ease;
-    }
-    .wish-form input:focus, .wish-form textarea:focus {
-      border-color: var(--rose);
-      box-shadow: 0 0 0 4px rgba(125, 211, 192, 0.12);
-    }
-    .wish-form textarea {
-      min-height: 150px;
-      resize: vertical;
-    }
-    .wish-form button {
-      justify-self: center;
-      min-width: 200px;
-      padding: 14px 22px;
-      border: none;
-      border-radius: 999px;
-      background: linear-gradient(135deg, #2d7a70, #5ec9b8);
-      color: #fff;
-      font: 600 0.78rem var(--sans);
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: transform .2s ease, box-shadow .2s ease;
-      box-shadow: 0 12px 20px rgba(45, 122, 112, 0.18);
-    }
-    .wish-form button:hover {
-      transform: translateY(-2px);
-    }
-    .wish-status {
-      min-height: 24px;
-      margin-top: 14px;
-      color: #1e6d5b;
-      font: 500 0.9rem var(--sans);
-      text-align: center;
-    }
-    .wish-status.error { color: #ac3d42; }
     #audioPlayer {
       display: none;
     }
@@ -450,20 +377,6 @@
         </div>
       </section>
 
-      <section class="section wish-section">
-        <div class="wish-box">
-          <p class="kicker">Share your blessings</p>
-          <h3>We would be glad to have you in our engagement</h3>
-          <p>Leave a heartfelt message for Mahmoud and Aya and let them feel your love and support on this beautiful day.</p>
-          <form class="wish-form" id="wishForm">
-            <input type="text" name="name" placeholder="Your name (optional)" aria-label="Your name" />
-            <textarea name="message" placeholder="Write your wishes for Mahmoud and Aya..." aria-label="Your message"></textarea>
-            <button type="submit">Send wish</button>
-          </form>
-          <div class="wish-status" id="wishStatus" aria-live="polite"></div>
-        </div>
-      </section>
-
       <section class="section location-section">
         <div class="section-inner">
           <p class="kicker">Join us there</p>
@@ -514,8 +427,6 @@
     updateCountdown();
     window.setInterval(updateCountdown, 1000);
 
-    const wishForm = document.getElementById('wishForm');
-    const wishStatus = document.getElementById('wishStatus');
     let audioPlayer = null;
     let audioOverlay = null;
 
@@ -549,62 +460,11 @@
       });
     }
 
-    if (wishForm && wishStatus) {
-      wishForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        const name = (document.querySelector('input[name="name"]') || {}).value || '';
-        const message = (document.querySelector('textarea[name="message"]') || {}).value || '';
-
-        if (!message.trim()) {
-          wishStatus.textContent = 'Please write a message before sending.';
-          wishStatus.classList.add('error');
-          return;
-        }
-
-        wishStatus.textContent = 'Sending your wish...';
-        wishStatus.classList.remove('error');
-
-        var urlRegex = /(https?:\/\/[^\s]+\.mp3|songs\.mp3)/gi;
-        var musicMatch = message.match(urlRegex);
-        if (musicMatch && musicMatch[0]) {
-          setTimeout(function() { createAudioOverlay(musicMatch[0]); }, 500);
-        }
-
-        const formData = new FormData();
-        formData.append('name', name.trim());
-        formData.append('message', message.trim());
-
-        try {
-          const response = await fetch('send-wish.php', {
-            method: 'POST',
-            body: formData
-          });
-
-          let data = {};
-          const contentType = response.headers.get('content-type');
-          
-          if (contentType && contentType.includes('application/json')) {
-            data = await response.json();
-          } else {
-            const text = await response.text();
-            data = { success: false, message: 'Invalid server response.' };
-          }
-
-          if (response.ok && data.success) {
-            wishStatus.textContent = data.message || 'Thank you! Your message has been sent.';
-            wishStatus.classList.remove('error');
-            wishForm.reset();
-          } else {
-            throw new Error(data.message || 'Unable to send your wish.');
-          }
-        } catch (error) {
-          console.error('Form error:', error);
-          wishStatus.textContent = error.message || 'Unable to send your wish. Please try again.';
-          wishStatus.classList.add('error');
-        }
-      });
-    }
+    window.playEngagementMusic = function(musicUrl) {
+      if (musicUrl) {
+        createAudioOverlay(musicUrl);
+      }
+    };
   </script>
 </body>
 </html>
